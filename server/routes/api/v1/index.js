@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
-
+const path = require('path');
+const fs = require('fs-extra');
 // token authorization
 const { verifyToken } = require('../../../middlewares/authorization');
 
@@ -51,7 +52,7 @@ router.get('/', function (req, res) {
 // endpoint for authentication
 router.get('/auth', verifyToken, auth.auth.bind(auth));
 router.post('/signin', auth.signin.bind(auth));
-router.post('/signup', auth.signup.bind(auth));
+router.post('/signup', verifyToken, administrationMulter.fields([{ name: 'avatar' }]),auth.signup.bind(auth));
 
 // endpoint for testing API Flow with Versions, should return api v1
 router.get('/tests', test.check.bind(test));
@@ -120,6 +121,7 @@ router.put(
   requestInfo.update.bind(requestInfo)
 );
 router.delete('/request-infos/:id', verifyToken, requestInfo.delete.bind(requestInfo));
+router.post('/revoke-admin', verifyToken, administration.blockUnblockAdmin.bind(administration));
 
 router.get('/media/:type/:file_name', (req, res, next) => {
   const currentPath = path.join(__dirname, '../', '../', '../', '../', 'public', 'files', req.params.type, req.params.file_name || 'default.png');

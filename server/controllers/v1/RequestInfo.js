@@ -22,21 +22,8 @@ class RequestInfoController extends Controller {
   }
 
   insert (req, res, next) {
-    req.body.code = this.codeGenerator('RI');
+    req.body.code = this.codeGenerator('REQ');
     super.insert(req, res, next);
-  }
-
-  update (req, res, next) {
-    // Find model to get old filenames
-    req.oldFilepaths = [];
-
-    new this.model({ id })
-      .fetch(this.attribs)
-      .then((model) => {
-        req.oldFilepaths.push('public/files/' + model.get('document'));
-
-        super.find(req, res, next);
-      });
   }
 }
 
