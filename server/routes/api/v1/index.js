@@ -52,7 +52,7 @@ router.get('/', function (req, res) {
 // endpoint for authentication
 router.get('/auth', verifyToken, auth.auth.bind(auth));
 router.post('/signin', auth.signin.bind(auth));
-router.post('/signup', administrationMulter.fields([{ name: 'avatar' }]),auth.signup.bind(auth));
+router.post('/signup', verifyToken,administrationMulter.fields([{ name: 'avatar' }]),auth.signup.bind(auth));
 
 // endpoint for testing API Flow with Versions, should return api v1
 router.get('/tests', test.check.bind(test));

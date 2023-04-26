@@ -47,7 +47,7 @@ class Auth extends Controller {
     const data = req.body;
 
     bookshelf.knex.transaction((t) => {
-      return this.txDataFetcher(t, Administration, [{ key: 'email', value: data.email }, { key: 'isActif', value: 1 }], [], true, []).then((result) => {
+      return this.txDataFetcher(t, Administration, [{ key: 'ninu', value: data.ninu }, { key: 'isActif', value: 1 }], [], true, []).then((result) => {
         const resultJSON = result.toJSON()
         delete resultJSON.session_token;
         delete resultJSON.role;

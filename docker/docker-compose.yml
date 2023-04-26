@@ -1,0 +1,22 @@
+version: "3"
+
+networks:
+  oni-doleances-network:
+    name: oni-doleances-network
+    driver: bridge
+
+    
+services:
+  oni-doleances-api:
+    # stdin_open: true
+    build:
+      context: ./../
+      dockerfile: docker/Dockerfile
+    image: oni-doleances-api
+    ports:
+      - "8850:3500"
+    container_name: oni-doleances-api
+    networks:
+      oni-doleances-network: 
+        aliases:
+          - "frontend"

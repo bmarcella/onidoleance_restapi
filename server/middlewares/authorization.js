@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 
-exports.verifyToken = (req, res, next) => {
+exports. verifyToken = (req, res, next) => {
   const bearerHeader = req.headers.authorization;
   const { ln = 'fr' } = req.query;
   if (!bearerHeader) {
