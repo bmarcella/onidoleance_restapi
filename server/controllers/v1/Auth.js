@@ -28,8 +28,7 @@ class Auth extends Controller {
   signup (req, res) {
     const data = req.body;
     data.password = this.genHash(data.password, this.genSalt());
-    if ([1, 2].includes(Number(data.role_id))) {
-      this.txItemSaver(null, Administration, { ...data, code: this.codeGenerator('OA'), isActif: 1 }, true)
+      this.txItemSaver(null, Administration, { ...data, code: this.codeGenerator('OA'), isActif: 0 }, true)
         .then(result => {
           this.functionResponse(result, res, true, 200)
         })
@@ -37,10 +36,7 @@ class Auth extends Controller {
           const details = this.getErrorDetails(error);
           this.functionResponse({ ...details, message: details.message !== 'EmptyResponse' ? details.message : 'Could not signup the admin user![ER-SG]' }, res, false, 400);
         })
-    } else {
-      this.functionResponse({ message: 'Could not signup the admin user![RO-SG]' }, res, false, 400);
     }
-  }
 
   // Create administration signin process
   signin (req, res) {
