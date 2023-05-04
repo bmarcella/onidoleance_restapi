@@ -121,6 +121,8 @@ class Controller {
       });
     }
 
+   
+
     this.txItemSaver(null, this.Model, data, true)
       .then((result) => {
         this.functionResponse(result, res, true, 201);
@@ -310,8 +312,8 @@ class Controller {
     });
   }
 
-  sqlQuery (queryStr, bindParams, t) {
-    if (t) {
+  sqlQuery(queryStr, bindParams, t){
+    if(t){
       return bookshelf.knex.raw(queryStr, bindParams).transacting(t);
     }
 
@@ -343,6 +345,30 @@ class Controller {
     })
       .destroy({ transacting: t, debug: this.DEBUG_KNEX, require: requireCond })
   };
+  functionError(error, res, type = 'result'){
+
+    const details = this.getErrorDetails(error);
+
+    res.status(400).send({
+      [type]: null,
+      server_datetime: this.currentServerDateTime(),
+      success: false,
+      pagination: null,
+      message: details.message,
+      error: details
+    });
+  }
+  functionSuccess(result, res, pagination, type = 'result'){
+
+    res.status(201).send({
+      [type]: result,
+      server_datetime: this.currentServerDateTime(),
+      success: true,
+      pagination: result? (result.pagination || pagination) : null,
+      message: "Success",
+      error: null
+    });
+  }
 
   txUpdateModel (t, Model, arr = [], obj, requireCond = true) {
     if (!arr.length) { throw new Error('ERROR: UPDATE[083]') }

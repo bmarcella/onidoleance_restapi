@@ -72,7 +72,7 @@ class AdministrationController extends Controller {
             .then((resultAdminUser) => {
               if (!resultAdminUser) { throw new Error('Your account dont dont have authorization to perform this action on another super admin account. [E-002]') }
               if (Number(resultAdminUser.get('isActif')) === Number(isBlocked)) { throw new Error(`User already ${isActif === 0 ? 'Unblock' : 'Blocked'} ![AL-001]`) }
-              return this.knexUpdaterFunc(t, resultAdminUser, { isActif: isBlocked, session_token: null }, true)
+              return this.knexUpdaterFunc(t, resultAdminUser, { isActif: isBlocked }, true)
             })
         })
     }).then((model) => {

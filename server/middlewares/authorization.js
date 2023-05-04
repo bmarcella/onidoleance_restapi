@@ -34,6 +34,18 @@ exports. verifyToken = (req, res, next) => {
   });
 };
 
+exports.isAdminLogin = (req, res, next) => {
+  let check = Number(req.auth.role_id || 'NA') ? true : false;
+  if(!check){
+    return res.status(403).json({
+      message: 'Unauthorized! Please login as administrator',
+      code: 4032
+    });
+  }else{
+    next();
+  }
+};
+
 exports.blockedEndpoint = (req, res, next) => {
   const { ln = 'fr' } = req.query;
   res.status(403).json({
