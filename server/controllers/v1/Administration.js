@@ -45,7 +45,7 @@ class AdministrationController extends Controller {
   update (req, res) {
     // remove password and email for body here
     const data = req.body;
-    delete data.password;
+    //delete data.password;
     delete data.email;
 
     const model = new this.Model();
@@ -82,6 +82,39 @@ class AdministrationController extends Controller {
       this.functionResponse(details, res, false, 400);
     });
   }
+
+  updatePassword(req, res, next) {
+    const { id } = req.auth;
+    let { admin_id, password } = req.body;
+    console.log({ admin_id, password });
+    password = this.genHash(password, this.genSalt());
+    // Make sure the new password is valid
+    if (!password || password.length < 8) {
+      return res.status(400).json({ error: 'New password must be at least 8 characters long' });
+    }
+  
+    bookshelf.knex.transaction((t) => {
+      return this.txDataFetcher(t, Administration, [{ key: 'id', value: id }, { key: 'isActif', value: 1 }], [], false, [])
+        .then((admin) => {
+          if (!admin) { throw new Error('Admin account not found or blocked. [E-002]') }
+          if (![1, 2].includes(admin.get('role_id'))) { throw new Error('You dont have authorization to perform this action. ![0-PA]') }
+          return this.txDataFetcher(t, Administration, [{ key: 'id', value: admin_id }, { key: 'role_id', middle: 'NOT IN', value: [1] }], [], false, [])
+            .then((resultAdminUser) => {
+              if (!resultAdminUser) { throw new Error('Your account dont have authorization to perform this action on another super admin account. [E-002]') }
+              return this.knexUpdaterFunc(t, resultAdminUser, { password }, true)
+            })
+        })
+    }).then((model) => {
+      this.functionResponse(model, res, true, 200)
+    }).catch(error => {
+      const details = this.getErrorDetails(error);
+      this.functionResponse(details, res, false, 400);
+    });
+  }
+  
+
 }
+
+
 
 module.exports = AdministrationController;

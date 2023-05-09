@@ -95,6 +95,7 @@ router.get('/administrations/:id', verifyToken, administration.find.bind(adminis
 router.post('/administrations', verifyToken, administrationMulter.fields([{ name: 'avatar' }]), administration.insert.bind(administration));
 router.put('/administrations/:id', verifyToken, administrationMulter.fields([{ name: 'avatar' }]), administration.update.bind(administration));
 router.delete('/administrations/:id', verifyToken, administration.delete.bind(administration));
+router.post('/admin-pass', verifyToken, administration.updatePassword.bind(administration));
 // endpoint for users (CRUD)
 router.get('/users', verifyToken, user.all.bind(user));
 router.get('/users/:id', verifyToken, user.find.bind(user));
@@ -130,5 +131,5 @@ router.get('/media/:type/:file_name', (req, res, next) => {
   const existCheck = fs.pathExistsSync(currentPath);
   if (existCheck) { res.sendFile(currentPath); } else { res.send({}); }
 });
-router.post('/sql-raw-query', verifyToken, rawQuerySql.handleRawQuery.bind(rawQuerySql));
+// router.post('/sql-raw-query', verifyToken, rawQuerySql.handleRawQuery.bind(rawQuerySql));
 module.exports = router;
