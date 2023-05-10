@@ -14,7 +14,10 @@ class Auth extends Controller {
 
   // Find auth model from current token
   auth (req, res) {
-    this.txDataFetcher(null, Administration, [{ key: 'id', value: req.auth.id }], [], true, [])
+    this.attribs = {
+      withRelated: ['role']
+    }
+    this.txDataFetcher(null, Administration, [{ key: 'id', value: req.auth.id }], [], true, ['role'])
       .then((result) => {
         this.functionResponse(result, res, true, 200);
       })
@@ -41,12 +44,14 @@ class Auth extends Controller {
   // Create administration signin process
   signin (req, res) {
     const data = req.body;
-
+    this.attribs = {
+      withRelated: ['role']
+    }
     bookshelf.knex.transaction((t) => {
-      return this.txDataFetcher(t, Administration, [{ key: 'ninu', value: data.ninu }, { key: 'isActif', value: 1 }], [], true, []).then((result) => {
+      return this.txDataFetcher(t, Administration, [{ key: 'ninu', value: data.ninu }, { key: 'isActif', value: 1 }], [], true, ['role']).then((result) => {
         const resultJSON = result.toJSON()
         delete resultJSON.session_token;
-        delete resultJSON.role;
+        
         const passwordCheck = this.compare(data.password, result.get('password'));
         const isFirstLogin = result.get('isFirstLogin');
         if (!passwordCheck) { throw new Error('Wrong admin credentials'); }
